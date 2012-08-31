@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>6.0</ProjectVersion>
+    <ProjectGuid>{3ed770be-490a-4ae2-a98d-83a675079856}</ProjectGuid>
+    <avrdevice>ATmega32</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <AvrGccProjectExtensions>
+    </AvrGccProjectExtensions>
+    <AssemblyName>libTBL_avr</AssemblyName>
+    <Name>libTBL_avr</Name>
+    <RootNamespace>libTBL_avr</RootNamespace>
+    <avrtool>com.atmel.avrdbg.tool.avrdragon</avrtool>
+    <avrtoolinterface>JTAG</avrtoolinterface>
+    <com_atmel_avrdbg_tool_avrdragon>
+      <ToolType>com.atmel.avrdbg.tool.avrdragon</ToolType>
+      <ToolName>AVR Dragon</ToolName>
+      <ToolNumber>00A20000624E</ToolNumber>
+      <Channel>
+        <host>127.0.0.1</host>
+        <port>2776</port>
+        <ssl>False</ssl>
+      </Channel>
+      <ToolOptions>
+        <InterfaceName>JTAG</InterfaceName>
+        <InterfaceProperties>
+          <JtagDbgClock>200000</JtagDbgClock>
+          <JtagProgClock>1000000</JtagProgClock>
+          <IspClock>150000</IspClock>
+          <JtagInChain>false</JtagInChain>
+          <JtagEnableExtResetOnStartSession>false</JtagEnableExtResetOnStartSession>
+          <JtagDevicesBefore>0</JtagDevicesBefore>
+          <JtagDevicesAfter>0</JtagDevicesAfter>
+          <JtagInstrBitsBefore>0</JtagInstrBitsBefore>
+          <JtagInstrBitsAfter>0</JtagInstrBitsAfter>
+        </InterfaceProperties>
+      </ToolOptions>
+    </com_atmel_avrdbg_tool_avrdragon>
+    <com_atmel_avrdbg_tool_simulator>
+      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolName xmlns="">AVR Simulator</ToolName>
+      <ToolNumber xmlns="">
+      </ToolNumber>
+      <Channel xmlns="">
+        <host>127.0.0.1</host>
+        <port>1768</port>
+        <ssl>False</ssl>
+      </Channel>
+    </com_atmel_avrdbg_tool_simulator>
+    <OutputType>Executable</OutputType>
+    <Language>C</Language>
+    <ToolchainName>com.Atmel.AVRGCC8</ToolchainName>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <AsfVersion>3.1.3</AsfVersion>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <OverrideVtorValue />
+    <eraseonlaunchrule>0</eraseonlaunchrule>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputFileName>libTBL_avr</OutputFileName>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <ToolchainSettings>
+      <AvrGcc xmlns="">
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>m</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+      </AvrGcc>
+    </ToolchainSettings>
+    <UsesExternalMakeFile>True</UsesExternalMakeFile>
+    <OutputDirectory>
+    </OutputDirectory>
+    <ExternalMakeFilePath>makefile_release.txt</ExternalMakeFilePath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <UsesExternalMakeFile>False</UsesExternalMakeFile>
+    <ExternalMakeFilePath>C:\Users\tbergmueller\Dropbox\Sources\libraries\TBL\TBL_V1_2\avr\libTBL_avr\libTBL_avr\makefile_debug.txt</ExternalMakeFilePath>
+    <OutputFileName>libTBL_avr</OutputFileName>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <ToolchainSettings>
+      <AvrGcc xmlns="">
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>F_CPU=16000000L</Value>
+            <Value>RWOUT=TRUE</Value>
+            <Value>PROCESSOR=atmega32</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.compiler.warnings.WarningsAsErrors>True</avrgcc.compiler.warnings.WarningsAsErrors>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>m</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="crc8.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="crc8.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dcs_basicFunctions.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dcs_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dcs_create.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dcs_fileTransfer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dcs_fileTransfer.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dcs_hardwareFunctions.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dcs_hardwareFunctions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dcs_internal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dc_commands.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dc_conventions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="devComSlave.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dcs_basicFunctions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="IrNecReceiver.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="IrNecReceiver.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m3sV2_basicFunctions.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m3sV2_basicFunctions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m3s_basicFunctions.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m3s_basicFunctions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m3s_masterFunctions.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="m3s_masterFunctions.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="mainTest.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="preProcessorDirectives.h">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="makefile_release.txt">
+      <SubType>compile</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\AvrGCC.targets" />
+</Project>

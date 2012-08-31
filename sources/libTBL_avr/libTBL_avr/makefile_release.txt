@@ -1,0 +1,215 @@
+#
+# Create Release Distribution of TBL-AVR
+# 
+# Thomas Bergmueller, August 2012
+#
+# IMPORTANT: Adjust configuration of the Tools (AVR-Toolchain (avr-gcc, avr-ar) and GNU-Commandline-Tools (mkdir, cp, rm))
+#			 Further make sure the commandline-tool objdump is executable from console, add the executables directory to PATH variable if not. This is used by the texAndHeader-Wizard at the end of the creation process
+
+
+#############################################################################
+############################## BUILD-TOOLS ##################################
+#############################################################################
+# Customize these tools to match your environmental settings. Absolute paths to tools are recommended!!  
+
+
+######################### AVR-GCC
+CC=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/avr-gcc.exe
+
+######################### AVR-AR
+AR=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/avr-ar.exe
+
+######################### CP
+CP=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/cp.exe
+
+######################### Make directory
+MKDIR=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/mkdir.exe
+
+######################### Remove
+RM=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/rm.exe
+ 
+
+
+
+
+
+
+#############################################################################
+############################## Compilerflags ################################
+#############################################################################
+
+
+######################### compilerflags
+CFLAGS= -c -Wall -Werror -ggdb -Os -DCOMPILELIB=TRUE
+
+######################### archiver flags
+ARFLAGS= -rcs
+
+
+#############################################################################
+############################## Directories ##################################
+#############################################################################
+
+
+######################### output directory
+OUTPUTDIR=../../../Releases/V1_2/avr/
+
+######################### output directoryname includes
+OUTPUTDIRINCLUDES=include/tbl
+
+######################### output directoryname includes
+OUTPUTDIRLIB=lib
+
+######################### object directory
+OBJDIR=Release
+
+######################### tools Folder with binaries
+TOOLDIR=../../../tools_bin/
+OUTPUTDIR_FROM_TOOLS=../Releases/V1_2/avr/
+
+######################### library output file Name
+OUTPUTFILE=libtbl.a
+
+######################### headers that are going to be released
+OUTPUTHEADERS=DevComSlave.h IrNecReceiver.h
+
+######################### Makefile Name
+THISFILE=makefile_debug.txt
+
+######################### Architectures
+ARCHITECTURES=avr2 avr25 avr3 avr31 avr35 avr4 avr5 avr51 avr6		# Would be for all, just compile these where MCUs are defined below
+
+
+######################### Target MCUS für DevComSlave Basic
+DCS_MCU_avr3_SINGLE_USART=
+DCS_MCU_avr3_DOUBLE_USART=
+DCS_MCU_avr4_SINGLE_USART=atmega8 atmega88
+DCS_MCU_avr4_DOUBLE_USART= 
+DCS_MCU_avr5_SINGLE_USART=atmega32 atmega644
+DCS_MCU_avr5_DOUBLE_USART=atmega644a atmega644pa atmega644p	
+DCS_MCU_avr6_DOUBLE_USART=
+DCS_MCU_avr5_QUART_USART=atmega640
+DCS_MCU_avr51_QUART_USART=atmega1280
+DCS_MCU_avr6_QUART_USART=atmega2560	
+
+DCS_BASIC_HFILES=preProcessorDirectives.h dcs_basicFunctions.h dcs_internal.h dcs_config.h m3s_basicFunctions.h devComSlave.h dcs_hardwareFunctions.h dc_conventions.h crc8.h
+
+
+##### Some important stuff to trick around with foreach 
+define \n
+
+
+endef
+
+
+############## ACTUAL MAKEFILE ########################
+
+
+all: cleanup libraries $(OUTPUTHEADERS)
+	
+	$(foreach file, $(OUTPUTHEADERS), $(CP) $(file) $(OUTPUTDIR)$(OUTPUTDIRINCLUDES)/$(file) ${\n} )
+	
+	$(TOOLDIR)headerAndTexWizard.exe $(OUTPUTDIR_FROM_TOOLS)$(OUTPUTDIRINCLUDES)/DevComSlave.h $(OUTPUTDIR_FROM_TOOLS)$(OUTPUTDIRLIB) # Modify Headerfile for DevComSlave.h
+
+
+
+clean:
+	@echo ~~~~~~~ Cleaning is automatically done with make all :) ~~~~~~~
+	@echo This is because it's too dangerous to keep old objects inside static library $(OUTPUTFILE) when building for release - one should know that.
+	
+	
+
+
+libraries: devComSlave IrNecReceiver
+	@echo ~~~~~~~~~~~~~~~~~~~~ Library creation succeeded ~~~~~~~~~~~~~~~~~~~~~~~~ 
+	
+	
+cleanup:
+	$(RM) -rf $(OBJDIR)							eme
+	$(RM) -rf $(OUTPUTDIR)$(OUTPUTDIRINCLUDES)		
+	$(RM) -rf $(OUTPUTDIR)$(OUTPUTDIRLIB)			
+
+	$(MKDIR) -p $(OBJDIR)
+	$(MKDIR) -p $(OUTPUTDIR)$(OUTPUTDIRINCLUDES)	
+	$(MKDIR) -p $(OUTPUTDIR)$(OUTPUTDIRLIB)
+
+	$(foreach arch,$(ARCHITECTURES), $(MKDIR) -p $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch) ${\n} )
+
+
+
+
+###########################################################
+###########################################################
+################# DEV COM SLAVE  ##########################
+###########################################################
+###########################################################
+
+devComSlave: dcsSlaveBasic dcsCreate m3sBasic dcsHardwarefunctions
+	@echo ~~~~~~~~~~~~~~~~~~~~ DevComSlave-Library built ~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+
+m3sBasic: m3s_basicFunctions.c m3s_basicFunctions.h $(THISFILE)
+	$(foreach arch, $(ARCHITECTURES), \
+		@echo m3s_basic fuer Architektur $(arch) ${\n} \
+		@$(CC) $(CFLAGS) -o $(OBJDIR)/m3s_basic.o m3s_basicFunctions.c ${\n} \
+		@$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/m3s_basic.o ${\n} \
+	)	
+	
+
+dcsCreate: dcs_create.c devComSlave.h $(THISFILE)
+	$(foreach arch, $(ARCHITECTURES), \
+		@echo dcs_create fuer Architektur $(arch) ${\n} \
+		@$(CC) $(CFLAGS) -o $(OBJDIR)/dcs_create.o dcs_create.c ${\n} \
+		@$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/dcs_create.o ${\n} \
+		)
+	
+dcsSlaveBasic: dcs_basicFunctions.c devComSlave.h $(THISFILE)
+	
+	$(foreach arch, $(ARCHITECTURES), \
+		@echo dcs_basicFunctions fuer Architektur $(arch) ${\n} \
+		@$(CC) $(CFLAGS) -o $(OBJDIR)/dcs_basicFunctions.o dcs_basicFunctions.c ${\n} \
+		@$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/dcs_basicFunctions.o ${\n} \
+		)
+
+dcsHardwarefunctions:	$(DCS_BASIC_HFILES) dcs_basicFunctions.c
+	
+	$(foreach arch, $(ARCHITECTURES), \
+			@echo ~~~~~ dcs_basic fuer Architektur: $(arch) ~~~~~ ${\n} \
+			$(foreach proc, $(DCS_MCU_$(arch)_SINGLE_USART), \
+				@echo dcs_basic fuer Prozessor: $(proc) ${\n} \
+				@$(CC) $(CFLAGS) -mmcu=$(proc) -DPROCESSOR=$(proc) -o $(OBJDIR)/dcs_$(proc)_rw_basic.o dcs_hardwareFunctions.c ${\n} 	\
+				@$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/dcs_$(proc)_rw_basic.o ${\n} \
+			)\
+			$(foreach proc, $(DCS_MCU_$(arch)_DOUBLE_USART), \
+				$(foreach usart, 0 1, \
+					@echo Kompiliere fuer double USART Prozessor: $(proc), UART $(usart) ${\n} \
+					@$(CC) $(CFLAGS) -mmcu=$(proc) -DPROCESSOR=$(proc) -DUSART_NR=$(usart) -o $(OBJDIR)/dcs_$(proc)_usart$(usart)_rw_basic.o dcs_hardwareFunctions.c ${\n} \
+					@$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/dcs_$(proc)_usart$(usart)_rw_basic.o ${\n} \
+				)\
+			)\
+			$(foreach proc, $(DCS_MCU_$(arch)_QUART_USART), \
+				$(foreach usart, 0 1 2 3, \
+					@echo Kompiliere fuer quart USART Prozessor: $(proc), UART $(usart) ${\n} \
+					@$(CC) $(CFLAGS) -mmcu=$(proc) -DPROCESSOR=$(proc) -DUSART_NR=$(usart) -o $(OBJDIR)/dcs_$(proc)_usart$(usart)_rw_basic.o dcs_hardwareFunctions.c ${\n}\
+					@$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/dcs_$(proc)_usart$(usart)_rw_basic.o ${\n} \
+				)\
+			)\
+	)
+
+
+
+
+
+###########################################################
+###########################################################
+############ Infrared NEC Receiver ########################
+###########################################################
+###########################################################
+
+IrNecReceiver:	IrNecReceiver.c IrNecReceiver.h preProcessorDirectives.h
+	$(foreach arch, $(ARCHITECTURES), \
+		@echo IrNecReceiver fuer Architektur $(arch); \
+		$(CC) $(CFLAGS) -o $(OBJDIR)/IrNecReceiver.o IrNecReceiver.c; \
+		$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/IrNecReceiver.o; \
+		)
+	@echo ~~~~~~~~~~~~~~~~~~~~ IrNecReceiver built ~~~~~~~~~~~~~~~~~~~~~~~~
