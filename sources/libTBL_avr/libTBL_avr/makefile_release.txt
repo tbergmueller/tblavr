@@ -1,7 +1,7 @@
 #
 # Create Release Distribution of TBL-AVR
 # 
-# Thomas Bergmueller, August 2012
+# Thomas Bergmueller, August 31, 2012
 #
 # IMPORTANT: Adjust configuration of the Tools (AVR-Toolchain (avr-gcc, avr-ar) and GNU-Commandline-Tools (mkdir, cp, rm))
 #			 Further make sure the commandline-tool objdump is executable from console, add the executables directory to PATH variable if not. This is used by the texAndHeader-Wizard at the end of the creation process
