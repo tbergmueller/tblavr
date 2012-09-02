@@ -39,6 +39,8 @@ namespace tbl_avr_gcc_installer
 			//
 			// TODO: Add constructor code after the InitializeComponent() call.
 			//
+			stdOut.DeactivateDebug();
+			stdOut.SetInterface(StdOutInterfaces.WindowsForm);
 		}
 		
 		
@@ -65,6 +67,9 @@ namespace tbl_avr_gcc_installer
 				}
 			}
 		}
+		
+		private bool installationHasErrors = false;
+		
 		
 		void DirSearch(string dir, string searchedDir)
 		{
@@ -228,6 +233,8 @@ namespace tbl_avr_gcc_installer
 			grp_install.Enabled = true;
 			rxt_console.Enabled = true;			
 			
+			installationHasErrors = false;
+			
 			output("#### Extracting Data ####");
 			extractData();
 			progress(5);
@@ -237,9 +244,14 @@ namespace tbl_avr_gcc_installer
 			
 			if(!this.searchDistributions())
 			{
+				installationHasErrors = true;
 				output("ERROR: No Toolchains found to update...");
 				return false;
 				//MessageBox.Show("Distributions Found");
+			}
+			else
+			{
+				// TODO: Let the user select which ones to install...
 			}
 			progress(30);
 			
@@ -255,9 +267,19 @@ namespace tbl_avr_gcc_installer
 			Directory.Delete(tempDirectory, true);
 			installTBLBinUtils(avrGccDistributions);
 			progress(100);
-				
-			hideGroupboxes();
-			grp_end.Visible = true;
+			
+			if(installationHasErrors)
+			{
+				stdOut.Error("Installation has errors. Please refer log window for details." + Environment.NewLine + Environment.NewLine + "Make sure all files belonging to TBL are closed and no IDEs (Atmel Studio, AVR-Studio, Eclipse, ..) are openened." + Environment.NewLine + Environment.NewLine + "Restart installer then...");
+			}
+			else
+			{
+				hideGroupboxes();
+				grp_end.Visible = true;
+			}
+
+			
+			
 			return(true);
 		}
 		
@@ -267,6 +289,7 @@ namespace tbl_avr_gcc_installer
 			
 			if(!Directory.Exists(tmpPath))
 			{
+				installationHasErrors = true;
 				output("ERROR: Directory doesn't exist: " + tmpPath);
 				return(false);
 			}
@@ -291,8 +314,9 @@ namespace tbl_avr_gcc_installer
 						{
 							File.Copy(srcFilename, targetFilename, true); // Copy an doverwrite
 						}
-						catch (Exception e)
+						catch
 						{
+							installationHasErrors = true;
 							output("ERROR: Could not copy file to " + targetFilename);
 						}
 						                             
@@ -324,8 +348,9 @@ namespace tbl_avr_gcc_installer
 						{
 							File.Copy(srcFilename, targetFilename, true); // Copy an doverwrite
 						}
-						catch (Exception e)
+						catch
 						{
+							installationHasErrors = true;
 							output("ERROR: Could not copy file to " + targetFilename);
 						}
 						                             

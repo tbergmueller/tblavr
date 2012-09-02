@@ -61,7 +61,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="TBL">
-      <HintPath>G:\Releases\V1_2\TBL.dll</HintPath>
+      <HintPath>TBL.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
