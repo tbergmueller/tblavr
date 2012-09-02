@@ -73,15 +73,13 @@ OUTPUTFILE=libtbl.a
 ######################### headers that are going to be released
 OUTPUTHEADERS=DevComSlave.h IrNecReceiver.h
 
-######################### Makefile Name
-THISFILE=makefile_debug.txt
 
 ######################### Architectures
-ARCHITECTURES=avr2 avr25 avr3 avr31 avr35 avr4 avr5 avr51 avr6		# Would be for all, just compile these where MCUs are defined below
+ARCHITECTURES=avr25 avr3 avr31 avr35 avr4 avr5 avr51 avr6		# Would be for all, just compile these where MCUs are defined below
 
 
 ######################### Target MCUS für DevComSlave Basic
-DCS_MCU_avr3_SINGLE_USART=
+DCS_MCU_avr3_SINGLE_USART= 
 DCS_MCU_avr3_DOUBLE_USART=
 DCS_MCU_avr4_SINGLE_USART=atmega8 atmega88
 DCS_MCU_avr4_DOUBLE_USART= 
@@ -148,7 +146,7 @@ devComSlave: dcsSlaveBasic dcsCreate m3sBasic dcsHardwarefunctions
 	@echo ~~~~~~~~~~~~~~~~~~~~ DevComSlave-Library built ~~~~~~~~~~~~~~~~~~~~~~~~ 
 
 
-m3sBasic: m3s_basicFunctions.c m3s_basicFunctions.h $(THISFILE)
+m3sBasic: m3s_basicFunctions.c m3s_basicFunctions.h
 	$(foreach arch, $(ARCHITECTURES), \
 		@echo m3s_basic fuer Architektur $(arch) ${\n} \
 		@$(CC) $(CFLAGS) -o $(OBJDIR)/m3s_basic.o m3s_basicFunctions.c ${\n} \
@@ -156,14 +154,14 @@ m3sBasic: m3s_basicFunctions.c m3s_basicFunctions.h $(THISFILE)
 	)	
 	
 
-dcsCreate: dcs_create.c devComSlave.h $(THISFILE)
+dcsCreate: dcs_create.c devComSlave.h
 	$(foreach arch, $(ARCHITECTURES), \
 		@echo dcs_create fuer Architektur $(arch) ${\n} \
 		@$(CC) $(CFLAGS) -o $(OBJDIR)/dcs_create.o dcs_create.c ${\n} \
 		@$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/dcs_create.o ${\n} \
 		)
 	
-dcsSlaveBasic: dcs_basicFunctions.c devComSlave.h $(THISFILE)
+dcsSlaveBasic: dcs_basicFunctions.c devComSlave.h
 	
 	$(foreach arch, $(ARCHITECTURES), \
 		@echo dcs_basicFunctions fuer Architektur $(arch) ${\n} \
