@@ -318,33 +318,6 @@
 		#define DEVCOM_UART_TX_vect		USART_TX_vect		// Transmit-Interrupt vektor der entsprechenden seriellen Schnittstelle
 	#endif
 
-		
-		#if defined __AVR_ATxmega128A1__ 
-			#define XMEGA_ARCH	1
-			// here it is
-			// 0 ... USARTA0 
-			// 1... USARTA1
-			// 2 ... USARTB1
-			#ifdef USART_NR
-				#if USART_NR==7 // USARTD1
-				
-					#define DEVCOM_UART			USARTD1
-					#define DEVCOM_UART_PORT	PORTD
-									
-					#define DEVCOM_UART_RX_vect		USARTD1_RXC_vect		// Receive-Interrupt Vektor der entsprechenden seriellen Schnittstelle
-					#define DEVCOM_UART_TX_vect		USARTD1_TXC_vect		// Transmit-Interrupt vektor der entsprechenden seriellen Schnittstelle
-				#endif
-			
-			#else
-			#error Compilationerror: USART_NR not definied. Define like n, e.g. usart0 would be 0
-			#endif		//
-		#endif
-
-
-
-
-
-
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++ ATMEGA 2560 UART 0
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++ ATMEGA 162

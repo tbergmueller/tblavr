@@ -149,17 +149,6 @@
 	#define UART4	4
 	
 	
-	#define UARTA0	0
-	#define UARTA1	1
-	#define UARTB0	2
-	#define UARTB1	3
-	#define UARTC0	4
-	#define UARTC1	5
-	#define UARTD0	6
-	#define UARTD1	7
-	
-	
-	
 	#define DCS_CMDHANDLER_IDX_CMDBYTE			0
 	#define DCS_CMDHANDLER_IDX_PARAMBYTE_1		1
 	#define DCS_CMDHANDLER_IDX_PARAMBYTE_2		2
@@ -451,9 +440,6 @@
 		#define dcs_start(uartNumber,DevComSlave_t_Pointer,fcpu,baudrate) prototype(uartNumber)(DevComSlave_t_Pointer,fcpu,baudrate)
 	#elif defined (__AVR_ATmega2560__)
 		#define prototype(uN) dcs_atmega2560_usart##uN##_rw_init
-		#define dcs_start(uartNumber,DevComSlave_t_Pointer,fcpu,baudrate) prototype(uartNumber)(DevComSlave_t_Pointer,fcpu,baudrate)
-	#elif defined (__AVR_ATxmega128A1__)
-		#define prototype(uN) dcs_atxmega128a1_usart##uN##_rw_init
 		#define dcs_start(uartNumber,DevComSlave_t_Pointer,fcpu,baudrate) prototype(uartNumber)(DevComSlave_t_Pointer,fcpu,baudrate)
 	#else	
 		#ifndef COMPILELIB	

@@ -103,11 +103,7 @@ const unsigned char crc8_array[256] PROGMEM= {
 		 dcs_setBaudrate();
 	 }
 	 
-	 #ifdef XMEGA_ARCH
-		DEVCOM_UART.CTRLA &= ~(USART_TXCINTLVL_MED_gc);
-	 #else
-		 DEVCOM_UART_UCSRB &=  ~(1<<DEVCOM_UART_TXCIE);	// Interrupt wieder deaktivieren
-	#endif
+	 DEVCOM_UART_UCSRB &=  ~(1<<DEVCOM_UART_TXCIE);	// Interrupt wieder deaktivieren
  }
 
  
@@ -150,11 +146,7 @@ void dcs_send(unsigned char* ch, unsigned short dataLength)
 	{		
 		if(i == (dataLength - 1))
 		{
-			#ifdef XMEGA_ARCH
-				DEVCOM_UART.CTRLA |= (USART_TXCINTLVL_MED_gc);
-			#else
-				DEVCOM_UART_UCSRB |=  (1<<DEVCOM_UART_TXCIE);	// enablen... sobald dann das letzte gesendet wurde gehts raus...
-			#endif
+			DEVCOM_UART_UCSRB |=  (1<<DEVCOM_UART_TXCIE);	// enablen... sobald dann das letzte gesendet wurde gehts raus...
 		}	
 		
 		
@@ -163,7 +155,6 @@ void dcs_send(unsigned char* ch, unsigned short dataLength)
 	
 	
 	ackToSend = FALSE; // Wann immer ich etwas sende (i.d.R. Kommandoantworten oder Acknowledgeframes), ist das ACK-Bit gesetzt. Somit braucht kein explizites Ack mehr verschickt werden
-
 }
 
 
@@ -172,43 +163,28 @@ void dcs_setBaudrate()
 {	
 	cli();
 	
-	#ifdef XMEGA_ARCH
+	uint16_t bauddiv = ((dc_fcpu+(dc_baudrate*4L))/(dc_baudrate*8L)-1); // try it with doublespeed mode, rounded
 	
+	DEVCOM_UART_UCSRA  &= ~(1<<DEVCOM_UART_U2X); // double speed mode ausschalten...
 	
+	if(bauddiv>255L) // if prescaler is too high
+	{
+		bauddiv = ((dc_fcpu+(dc_baudrate*8L))/(dc_baudrate*16L)-1); // try it with normal mode, rounded
+	}
+	else// if doublespeed mode is ok
+	{
+		DEVCOM_UART_UCSRA  |= (1<<DEVCOM_UART_U2X); // double speed mode aktivieren...
+	}		
 	
-		//#error "Hy mann, hier ist noch was zu tun.. baudrate momentan absolut"
-	
-		// *DEBUG* Fixe Baudrate & Scale 38400
-		// TODOOO!!!
-		DEVCOM_UART.BAUDCTRLA = (uint8_t) (3269 & 0x00FF);
-		DEVCOM_UART.BAUDCTRLB = (uint8_t)(((0b1010 << USART_BSCALE_gp) & USART_BSCALE_gm) | ((3269>>8) & ~USART_BSCALE_gm));
-	
-	
-	
-	
-	#else
-		uint16_t bauddiv = ((dc_fcpu+(dc_baudrate*4L))/(dc_baudrate*8L)-1); // try it with doublespeed mode, rounded
-	
-		DEVCOM_UART_UCSRA  &= ~(1<<DEVCOM_UART_U2X); // double speed mode ausschalten...
-	
-		if(bauddiv>255L) // if prescaler is too high
-		{
-			bauddiv = ((dc_fcpu+(dc_baudrate*8L))/(dc_baudrate*16L)-1); // try it with normal mode, rounded
-		}
-		else// if doublespeed mode is ok
-		{
-			DEVCOM_UART_UCSRA  |= (1<<DEVCOM_UART_U2X); // double speed mode aktivieren...
-		}		
-	
-		// Set baudrate registers
+	// Set baudrate registers
 	 
-		DEVCOM_UART_UBRRL = (uint8_t)(bauddiv);	
+	DEVCOM_UART_UBRRL = (uint8_t)(bauddiv);	
 	
-		#ifdef DEVCOM_UART_UBRRH
-			DEVCOM_UART_UBRRH = (uint8_t)(bauddiv >> 8);
-		#endif
+	#ifdef DEVCOM_UART_UBRRH
+		DEVCOM_UART_UBRRH = (uint8_t)(bauddiv >> 8);
+	#endif
 	
-	#endif	
+		
 	sei();
 }
 
@@ -234,48 +210,13 @@ void DCS_BASIC_INIT(DevComSlave_t* rSlave, uint32_t vFcpu, uint32_t vBaudrate)
 	currentSlave->SendFrame = dcs_sendFrame;	
 	if(currentSlave->RWPort != NULL)
 	{
-		*DDR(currentSlave->RWPort) |= (1<<currentSlave->RW_bp); // RW-Line to Output	
-			
+		*DDR(currentSlave->RWPort) |= (1<<currentSlave->RW_bp); // RW-Line to Output		
 		DCS_RW_TO_READ_macro	// Set to Reading/Receiving default		
 	}	
 	
-	
-	#ifdef XMEGA_ARCH
-	
-	
-	
-	DEVCOM_UART.CTRLA = DEVCOM_UART.CTRLB = DEVCOM_UART.CTRLC = 0; // init
-	
-	DEVCOM_UART.CTRLB |= USART_RXEN_bm | USART_TXEN_bm;						// Receiver und Transmitter aktivieren
-	DEVCOM_UART.CTRLA |= USART_RXCINTLVL_MED_gc;							// Receive Interrupt aktivieren
-	DEVCOM_UART.CTRLC |= USART_CHSIZE_8BIT_gc;
-		
-	
-	DEVCOM_UART_PORT.DIRSET = PIN7_bm;  // Txd auf Ausgang
-	DEVCOM_UART_PORT.DIRCLR = PIN6_bm;  // RxD auf Eingang
-	
-	if(USART_NR %2)
-	{
-		DEVCOM_UART_PORT.PIN6CTRL = 0b011 << 3; // Pullup @ OPC register...
-	}
-	else
-	{
-		DEVCOM_UART_PORT.PIN2CTRL = 0b011 << 3; // Pullup @ OPC register...
-	}	
-	
-	
-	PMIC.CTRL |= PMIC_MEDLVLEN_bm;
-	
-	
-	dcs_setBaudrate(); // Baudrate setzen, calls sei();
-	
-	#else
-	
-	
-		DEVCOM_UART_UCSRB   = 0;
-		DEVCOM_UART_UCSRB  |= (1<<DEVCOM_UART_TXEN) | (1<<DEVCOM_UART_RXEN); 			// Receiver und Transmitter aktivieren
-		DEVCOM_UART_UCSRB  |=  (1<<DEVCOM_UART_RXCIE);									// Receive Interrupt aktivieren
-	#endif
+	DEVCOM_UART_UCSRB   = 0;
+	DEVCOM_UART_UCSRB  |= (1<<DEVCOM_UART_TXEN) | (1<<DEVCOM_UART_RXEN); 			// Receiver und Transmitter aktivieren
+	DEVCOM_UART_UCSRB  |=  (1<<DEVCOM_UART_RXCIE);									// Receive Interrupt aktivieren
 	
 	dcs_rxc_function = dcs_processReceived;
 	dcs_txc_function = dcs_processTxcInterrupt;
@@ -286,21 +227,13 @@ void DCS_BASIC_INIT(DevComSlave_t* rSlave, uint32_t vFcpu, uint32_t vBaudrate)
 }
 
 
-void dcs_usart_putc(unsigned char test)
+void dcs_usart_putc(unsigned char value)
 {
 	
-	#ifdef XMEGA_ARCH
 	
-		while ((DEVCOM_UART.STATUS & USART_DREIF_bm)==0); 
-	
-		
-		DEVCOM_UART.DATA = test; 										// Senden
-		
-	#else
 	while ( !(DEVCOM_UART_UCSRA & (1<<DEVCOM_UART_UDRE_bp))); 		// warte bis Sendebuffer leer.
 		
 	DEVCOM_UART_UDR = value; 										// Senden
-	#endif
 }
 
 
@@ -310,7 +243,7 @@ void dcs_usart_putc(unsigned char test)
 // ############# Interrupt Vektoren ####################
 SIGNAL(DEVCOM_UART_RX_vect) 
 {	
-	dcs_rxc_function(DEVCOM_UART.DATA);
+	dcs_rxc_function(DEVCOM_UART_UDR);
 }
 
 

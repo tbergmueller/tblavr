@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectVersion>6.0</ProjectVersion>
     <ProjectGuid>{3ed770be-490a-4ae2-a98d-83a675079856}</ProjectGuid>
-    <avrdevice>ATxmega128A1</avrdevice>
+    <avrdevice>ATmega32</avrdevice>
     <avrdeviceseries>none</avrdeviceseries>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
     <AvrGccProjectExtensions>
@@ -12,8 +12,8 @@
     <AssemblyName>libTBL_avr</AssemblyName>
     <Name>libTBL_avr</Name>
     <RootNamespace>libTBL_avr</RootNamespace>
-    <avrtool>com.atmel.avrdbg.tool.jtagicemk3</avrtool>
-    <avrtoolinterface>PDI</avrtoolinterface>
+    <avrtool>com.atmel.avrdbg.tool.avrdragon</avrtool>
+    <avrtoolinterface>JTAG</avrtoolinterface>
     <com_atmel_avrdbg_tool_avrdragon>
       <ToolType>com.atmel.avrdbg.tool.avrdragon</ToolType>
       <ToolName>AVR Dragon</ToolName>
@@ -58,35 +58,6 @@
     <OverrideVtor>false</OverrideVtor>
     <OverrideVtorValue />
     <eraseonlaunchrule>0</eraseonlaunchrule>
-    <com_atmel_avrdbg_tool_jtagicemk3>
-      <ToolType>com.atmel.avrdbg.tool.jtagicemk3</ToolType>
-      <ToolName>JTAGICE3</ToolName>
-      <ToolNumber>J30200012676</ToolNumber>
-      <KeepTimersRunning>true</KeepTimersRunning>
-      <OverrideVtor>false</OverrideVtor>
-      <OverrideVtorValue>
-      </OverrideVtorValue>
-      <Channel>
-        <host>127.0.0.1</host>
-        <port>12286</port>
-        <ssl>False</ssl>
-      </Channel>
-      <ToolOptions>
-        <InterfaceName>PDI</InterfaceName>
-        <InterfaceProperties>
-          <JtagDbgClock>7500000</JtagDbgClock>
-          <JtagProgClock>1000000</JtagProgClock>
-          <IspClock>150000</IspClock>
-          <JtagInChain>false</JtagInChain>
-          <JtagEnableExtResetOnStartSession>false</JtagEnableExtResetOnStartSession>
-          <JtagDevicesBefore>0</JtagDevicesBefore>
-          <JtagDevicesAfter>0</JtagDevicesAfter>
-          <JtagInstrBitsBefore>0</JtagInstrBitsBefore>
-          <JtagInstrBitsAfter>0</JtagInstrBitsAfter>
-          <PdiClock>571020</PdiClock>
-        </InterfaceProperties>
-      </ToolOptions>
-    </com_atmel_avrdbg_tool_jtagicemk3>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputFileName>libTBL_avr</OutputFileName>
@@ -120,42 +91,35 @@
     <OutputFileName>libTBL_avr</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <ToolchainSettings>
-      <AvrGcc>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>F_CPU=32000000L</Value>
-      <Value>RWOUT=TRUE</Value>
-      <Value>PROCESSOR=atxmega128a1</Value>
-      <Value>USART_NR=7</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcc.compiler.warnings.WarningsAsErrors>True</avrgcc.compiler.warnings.WarningsAsErrors>
-  <avrgcc.linker.libraries.Libraries>
-    <ListValues>
-      <Value>m</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.Libraries>
-  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
-</AvrGcc>
+      <AvrGcc xmlns="">
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>F_CPU=16000000L</Value>
+            <Value>RWOUT=TRUE</Value>
+            <Value>PROCESSOR=atmega32</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.compiler.warnings.WarningsAsErrors>True</avrgcc.compiler.warnings.WarningsAsErrors>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>m</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="clksys_driver.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="clksys_driver.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="crc8.c">
       <SubType>compile</SubType>
     </Compile>

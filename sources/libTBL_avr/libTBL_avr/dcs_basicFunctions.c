@@ -56,7 +56,10 @@ void dcs_processReceived(unsigned char pData)
 	
 	byteCnt++;	// increase for next Byte, note beneath this line, Byte Numbering starts with 1, like good old VB-Times ;)
 	
-	
+	if(dcs_space1[2] == 0xc0 || dcs_space1[2] == 0x9f)
+	{
+		dcs_space1[0] |= (1<<0);
+	}
 		
 	if(devComReady && ((pData != 0x10)||(byteCnt!=1)))
 	{
