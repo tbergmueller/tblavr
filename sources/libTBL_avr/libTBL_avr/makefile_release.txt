@@ -14,19 +14,19 @@
 
 
 ######################### AVR-GCC
-CC=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/avr-gcc.exe
+CC="C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/avr-gcc.exe"
 
 ######################### AVR-AR
-AR=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/avr-ar.exe
+AR="C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/avr-ar.exe"
 
 ######################### CP
-CP=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/cp.exe
+CP="C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/cp.exe"
 
 ######################### Make directory
-MKDIR=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/mkdir.exe
+MKDIR="C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/mkdir.exe"
 
 ######################### Remove
-RM=C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/rm.exe
+RM="C:/Program Files (x86)/Atmel/Atmel Studio 6.0/extensions/Atmel/AVRGCC/3.4.0.65/AVRToolchain/bin/rm.exe"
  
 
 
@@ -75,7 +75,7 @@ OUTPUTHEADERS=DevComSlave.h IrNecReceiver.h
 
 
 ######################### Architectures
-ARCHITECTURES=avr25 avr3 avr31 avr35 avr4 avr5 avr51 avr6		# Would be for all, just compile these where MCUs are defined below
+ARCHITECTURES=avr25 avr3 avr31 avr35 avr4 avr5 avr51 avr6 avrxmega7		# Would be for all, just compile these where MCUs are defined below
 
 
 ######################### Target MCUS für DevComSlave Basic
@@ -89,6 +89,7 @@ DCS_MCU_avr6_DOUBLE_USART=
 DCS_MCU_avr5_QUART_USART=atmega640
 DCS_MCU_avr51_QUART_USART=atmega1280
 DCS_MCU_avr6_QUART_USART=atmega2560	
+DCS_MCU_avrxmega7_OCTA_USART=atxmega128a1
 
 DCS_BASIC_HFILES=preProcessorDirectives.h dcs_basicFunctions.h dcs_internal.h dcs_config.h m3s_basicFunctions.h devComSlave.h dcs_hardwareFunctions.h dc_conventions.h crc8.h
 
@@ -187,6 +188,13 @@ dcsHardwarefunctions:	$(DCS_BASIC_HFILES) dcs_basicFunctions.c
 			)\
 			$(foreach proc, $(DCS_MCU_$(arch)_QUART_USART), \
 				$(foreach usart, 0 1 2 3, \
+					@echo Kompiliere fuer quart USART Prozessor: $(proc), UART $(usart) ${\n} \
+					@$(CC) $(CFLAGS) -mmcu=$(proc) -DPROCESSOR=$(proc) -DUSART_NR=$(usart) -o $(OBJDIR)/dcs_$(proc)_usart$(usart)_rw_basic.o dcs_hardwareFunctions.c ${\n}\
+					@$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/dcs_$(proc)_usart$(usart)_rw_basic.o ${\n} \
+				)\
+			)\
+			$(foreach proc, $(DCS_MCU_$(arch)_OCTA_USART), \
+				$(foreach usart, 7, \
 					@echo Kompiliere fuer quart USART Prozessor: $(proc), UART $(usart) ${\n} \
 					@$(CC) $(CFLAGS) -mmcu=$(proc) -DPROCESSOR=$(proc) -DUSART_NR=$(usart) -o $(OBJDIR)/dcs_$(proc)_usart$(usart)_rw_basic.o dcs_hardwareFunctions.c ${\n}\
 					@$(AR) $(ARFLAGS) $(OUTPUTDIR)$(OUTPUTDIRLIB)/$(arch)/$(OUTPUTFILE) $(OBJDIR)/dcs_$(proc)_usart$(usart)_rw_basic.o ${\n} \

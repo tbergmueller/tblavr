@@ -286,7 +286,7 @@ void DCS_BASIC_INIT(DevComSlave_t* rSlave, uint32_t vFcpu, uint32_t vBaudrate)
 }
 
 
-void dcs_usart_putc(unsigned char test)
+void dcs_usart_putc(unsigned char c)
 {
 	
 	#ifdef XMEGA_ARCH
@@ -294,12 +294,12 @@ void dcs_usart_putc(unsigned char test)
 		while ((DEVCOM_UART.STATUS & USART_DREIF_bm)==0); 
 	
 		
-		DEVCOM_UART.DATA = test; 										// Senden
+		DEVCOM_UART.DATA = c; 										// Senden
 		
 	#else
-	while ( !(DEVCOM_UART_UCSRA & (1<<DEVCOM_UART_UDRE_bp))); 		// warte bis Sendebuffer leer.
+		while ( !(DEVCOM_UART_UCSRA & (1<<DEVCOM_UART_UDRE_bp))); 		// warte bis Sendebuffer leer.
 		
-	DEVCOM_UART_UDR = value; 										// Senden
+		DEVCOM_UART_UDR = c; 										// Senden
 	#endif
 }
 
@@ -310,7 +310,11 @@ void dcs_usart_putc(unsigned char test)
 // ############# Interrupt Vektoren ####################
 SIGNAL(DEVCOM_UART_RX_vect) 
 {	
-	dcs_rxc_function(DEVCOM_UART.DATA);
+	#ifdef XMEGA_ARCH
+		dcs_rxc_function(DEVCOM_UART.DATA);
+	#else
+		dcs_rxc_function(DEVCOM_UART_UDR);
+	#endif
 }
 
 
